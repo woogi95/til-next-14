@@ -8,9 +8,11 @@
 - /src/components/global-layout.tsx
 
 ```tsx
-import { ReactNode } from "react";
-
-export default function GlobalLayout({ children }: { children: ReactNode }) {
+export default function GlobalLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div>
       <header>헤더</header>
@@ -72,37 +74,33 @@ body {
 
 ```css
 .container {
-  background-color: white;
+  background-color: #fff;
   max-width: 600px;
   min-height: 100vh;
   margin: 0 auto;
   box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 30px 0px;
-  padding: 20px 15px;
+  padding: 0 15px;
 }
-
 .header {
   height: 60px;
   font-weight: bold;
   font-size: 18px;
   line-height: 60px;
 }
-
 .header > a {
   text-decoration: none;
-  color: black;
+  color: #000;
 }
-
 .main {
   padding: 10px;
 }
-
 .footer {
-  padding: 100px 0;
-  color: black;
+  padding: 100px 0px;
+  color: #000;
 }
 ```
 
-- /src/components/global-layout.tsx css적용
+- /src/components/global-layout.tsx 수정
 
 ```tsx
 import styles from "@/styles/global-layout.module.css";
@@ -160,7 +158,7 @@ export default function Home() {
 
 ## 첫화면에 보여줄 상품 목록 컴포넌트
 
-- /src/components/good-item.tsx 생성
+- /src/componets/good-item.tsx 생성
 
 ```tsx
 import React from "react";
@@ -175,7 +173,7 @@ export default GoodItem;
 ## 더미 데이터(Mock Data)
 
 - https://fakestoreapi.com/docs
-- /src/mock 폴더생성
+- /src/mock 폴더 생성
 - /src/mock/goods.json 파일 생성
 
 ```json
@@ -376,14 +374,14 @@ export default function Home() {
     <div className={styles.container}>
       <section>
         <h3>지금 추천하는 상품</h3>
-        {/* 3개의 상품 추천 */}
+        {/* 3개만 랜덤하게 출력 */}
         {goods.slice(0, 3).map((item) => (
           <GoodItem key={item.id} />
         ))}
       </section>
       <section>
         <h3>등록된 모든 상품</h3>
-        {/* 모든 상품 출력 */}
+        {/* 전체 상품 출력 */}
         {goods.map((item) => (
           <GoodItem key={item.id} />
         ))}
@@ -393,7 +391,7 @@ export default function Home() {
 }
 ```
 
-- /src/component/good-item.tsx 수정
+- /src/components/good-item.tsx 수정
 
 ```tsx
 import React from "react";
@@ -406,7 +404,6 @@ interface GoodItemProps {
   category: string;
   image: string;
   rating: { rate: number; count: number };
-  children?: React.ReactNode;
 }
 
 const GoodItem = ({ title }: GoodItemProps) => {
@@ -511,10 +508,10 @@ export default GoodItem;
 }
 ```
 
-## 이미지를 최적화 해주는 Next
+## 이미지를 최적화해주는 Next
 
 - Next 는 이미지를 자동으로 용량 최적화 해줌.
-- Next 는 스크롤시 화면에 이미지가 보일 때 쯤 로딩한다.
+- Next 는 스크롤시 화면에 이미지가 보일 때줌 로딩합니다.
 - layzy loading
 - 곤란한 상황 (외부경로 이미지는 설정이 필요)
 
@@ -525,13 +522,12 @@ export default GoodItem;
 
 ### 2. 외부 URL 이미지 경로 사용시 설정
 
-- `next.config.mjs`에 추가
+- `next.config.mjs` 추가
 
 ```mjs
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-  // 추가 코드
   images: {
     remotePatterns: [
       {
@@ -592,7 +588,7 @@ const SearchLayout = () => {
 export default SearchLayout;
 ```
 
-- /src/components/search-layout.module.css
+- /src/components/search-layout.moudle.css
 
 ```css
 .container {
@@ -603,21 +599,20 @@ export default SearchLayout;
 .container > input {
   flex: 1;
   padding: 15px;
-  border: 1px solid rga(220, 220, 220);
+  border: 1px solid rgb(220, 220, 220);
   border-radius: 5px;
 }
-
 .container > button {
   width: 80px;
   border-radius: 5px;
   border: none;
-  background-color: #b6b6b6;
+  background-color: rgb(37, 147, 255);
   color: #fff;
   cursor: pointer;
 }
 ```
 
-- `/src/pages/_app.tsx`에 추가
+- `/src/pages/_app.tsx` 에 일단 추가
 
 ```tsx
 import GlobalLayout from "@/components/global-layout";
@@ -776,4 +771,50 @@ export default function Page() {
     </div>
   );
 }
+```
+
+# 공통 레이아웃에 다양한 레이아웃 적용해 보기
+
+- `_app.tsx`
+
+```tsx
+import GlobalLayout from "@/components/global-layout";
+import "@/styles/globals.css";
+import { NextPage } from "next";
+import type { AppProps } from "next/app";
+import { ReactNode } from "react";
+
+// 속성을 추가해준다. 확장도 한다.
+// NextPage 타입을 확장해서 개발자가 추가로 ReactNode 를 1개 추가한 타입
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactNode) => ReactNode;
+};
+
+export default function App({
+  Component,
+  pageProps,
+}: AppProps & {
+  Component: NextPageWithLayout;
+}) {
+  const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
+  return <GlobalLayout>{getLayout(<Component {...pageProps} />)}</GlobalLayout>;
+}
+```
+
+- /src/pages/index.tsx
+
+```tsx
+// JS 에서는 함수도 객체다.
+// 객체는 속성을 추가할 수 있다.
+Home.getLayout = (page: ReactNode) => {
+  return <SearchLayout>{page}</SearchLayout>;
+};
+```
+
+- /src/pages/search.tsx
+
+```tsx
+Page.getLayout = (page: ReactNode) => {
+  return <SearchLayout>{page}</SearchLayout>;
+};
 ```

@@ -24,13 +24,7 @@ const SearchLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <div className={styles.container}>
-        <input
-          type="text"
-          value={search}
-          onKeyDown={(e) => handleKeyEnter(e)}
-          onChange={(e) => handleChange(e)}
-          placeholder="검색어를 입력하세요."
-        />
+        <input type="text" value={search} onKeyDown={(e) => handleKeyEnter(e)} onChange={(e) => handleChange(e)} placeholder="검색어를 입력하세요." />
         <button onClick={handleSubmit}>검색</button>
       </div>
       <div>{children}</div>

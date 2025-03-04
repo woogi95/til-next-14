@@ -1,11 +1,7 @@
 import styles from "@/styles/global-layout.module.css";
 import Link from "next/link";
 
-export default function GlobalLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function GlobalLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className={styles.container}>
       <header className={styles.header}>
