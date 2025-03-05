@@ -1,6 +1,10 @@
 import { fetchOneGood } from "@/lib/fetch-one-good";
 import styles from "@/pages/good/[id].module.css";
-import { GetServerSidePropsContext, InferGetServerSidePropsType, InferGetStaticPropsType } from "next";
+import {
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+  InferGetStaticPropsType,
+} from "next";
 import Image from "next/image";
 // 라우터가 동적인 경로가 필요로 한 상황이다.
 // http://localhost:3000/good/[id]   ===> 파라메터
@@ -29,7 +33,9 @@ export async function getStaticProps(context: GetServerSidePropsContext) {
   };
 }
 
-export default function Page({ data }: InferGetStaticPropsType<typeof getStaticProps>) {
+export default function Page({
+  data,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   if (data === null) {
     return <div>현재 데이터가 없습니다.</div>;
   }
@@ -39,7 +45,10 @@ export default function Page({ data }: InferGetStaticPropsType<typeof getStaticP
       <div className={styles.title}>
         {title} <span>(${price})</span>
       </div>
-      <div className={styles.cover_image} style={{ backgroundImage: `url(${image})` }}>
+      <div
+        className={styles.cover_image}
+        style={{ backgroundImage: `url(${image})` }}
+      >
         <Image src={image} alt={title} width={245} height={350} />
       </div>
       <div className={styles.category}>{category}</div>

@@ -5,22 +5,29 @@ import { ReactNode } from "react";
 import SearchLayout from "@/components/search-layout";
 import { InferGetServerSidePropsType, InferGetStaticPropsType } from "next";
 import { fetchGoods } from "@/lib/fetch-good";
-import { fetchRandomGood } from "@/lib/fetch-random-good";
+import { fetchRandomGoods } from "@/lib/fetch-random-good";
 
 // Next 에는 약속이 된 함수가 있다.
 export const getStaticProps = async () => {
   // 병렬로 실행하기
-  const [allGoods, randomGoods] = await Promise.all([fetchGoods(), fetchRandomGood()]);
+  const [allGoods, randomGoods] = await Promise.all([
+    fetchGoods(),
+    fetchRandomGoods(),
+  ]);
 
   return {
     props: {
       allGoods: allGoods,
       randomGoods: randomGoods,
     },
+    revalidate: 60, // 60 초 후 다시 생성
   };
 };
 
-export default function Home({ allGoods, randomGoods }: InferGetStaticPropsType<typeof getStaticProps>) {
+export default function Home({
+  allGoods,
+  randomGoods,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <div className={styles.container}>
       <section>
